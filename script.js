@@ -21,6 +21,41 @@ document.addEventListener('DOMContentLoaded', function () {
   
   forms.forEach(function(form) {
     form.addEventListener('submit', function(e) {
+      // Check if all required fields are filled
+      const requiredFields = form.querySelectorAll('[required]');
+      let allFilled = true;
+      let emptyFields = [];
+      
+      requiredFields.forEach(function(field) {
+        if (!field.value.trim()) {
+          allFilled = false;
+          field.style.borderColor = '#b71c1c';
+          emptyFields.push(field.previousElementSibling ? field.previousElementSibling.textContent : 'Campo');
+        } else {
+          field.style.borderColor = '';
+        }
+      });
+      
+      if (!allFilled) {
+        e.preventDefault(); // Prevent form submission
+        
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          const originalText = submitBtn.textContent;
+          submitBtn.textContent = '⚠ Por favor complete todos los campos obligatorios';
+          submitBtn.style.background = '#b71c1c';
+          
+          setTimeout(function() {
+            submitBtn.textContent = originalText;
+            submitBtn.style.background = '';
+          }, 3000);
+        }
+        
+        // Show alert message
+        alert('Por favor complete todos los campos obligatorios del formulario antes de enviar.');
+        return false;
+      }
+      
       // Let the form submit naturally to Formspree
       // After a short delay, clear the form
       setTimeout(function() {
@@ -36,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
           const originalText = submitBtn.textContent;
-          submitBtn.textContent = '✔ Sent! Form cleared.';
+          submitBtn.textContent = '✔ Enviado! Formulario limpiado.';
           submitBtn.style.background = '#1b5e20';
           
           setTimeout(function() {
